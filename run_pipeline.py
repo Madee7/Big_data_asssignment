@@ -63,11 +63,11 @@ def run_full_pipeline(skip_download: bool = False) -> dict:
     from ml.clustering import run_clustering
     from ml.return_predictor import run_return_predictor
 
-    # FIX 2: correct import path — data_cleaner.py lives inside etl/
-    from etl.data_cleaner import load_and_clean, engineer_features
+    # # FIX 2: correct import path — data_cleaner.py lives inside etl/
+    # from etl.data_cleaner import load_and_clean, engineer_features
 
-    # FIX 3: data loading now happens here, after sys.path is set up
-    df = engineer_features(load_and_clean())
+    # # FIX 3: data loading now happens here, after sys.path is set up
+    # df = engineer_features(load_and_clean())
 
     log.info("╔══════════════════════════════════════════════════════╗")
     log.info("║   STOCK PORTFOLIO ANALYSIS — END-TO-END PIPELINE     ║")
@@ -122,9 +122,7 @@ def run_full_pipeline(skip_download: bool = False) -> dict:
             "cv_accuracy":   rf_metrics["cv_accuracy"],
             "forward_days":  rf_metrics["forward_days"]
         }
-    }
-
-    # Persist summary JSON
+    }    # Persist summary JSON
     summary_path = os.path.join(cfg.PROCESSED_DIR, "pipeline_summary.json")
     with open(summary_path, "w") as f:
         json.dump(summary, f, indent=2)
