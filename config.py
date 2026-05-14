@@ -11,7 +11,7 @@ CHANGES FROM ORIGINAL:
   - FORWARD_DAYS reduced from 30 → 10  (less noisy, more predictable)
   - N_ESTIMATORS increased from 200 → 500 (better generalisation)
   - MAX_DEPTH reduced from 8 → 6  (less overfitting)
-  - PREDICTOR_FEATURES expanded with volume, lag returns (MACD removed for memory)
+  - PREDICTOR_FEATURES expanded with MACD, volume, lag returns
   - RETURN_CLIP added to winsorise extreme daily returns
 """
 
@@ -42,8 +42,8 @@ BENCHMARK_TICKER = "MSFT"
 # Date Range
 # ─────────────────────────────────────────────
 # FIX: updated to match actual data range in the Kaggle parquet files
-START_DATE = "2013-02-08"
-END_DATE   = "2018-02-07"
+START_DATE = "2020-01-01"
+END_DATE   = "2025-01-01"
 
 # ─────────────────────────────────────────────
 # Paths  (all relative to this file's directory)
@@ -106,7 +106,7 @@ CLUSTER_COLORS = {
 # ML — Return Prediction
 # ─────────────────────────────────────────────
 # FIX: 10-day forward return is far less noisy than 30-day
-FORWARD_DAYS = 5
+FORWARD_DAYS = 10
 
 # FIX: more trees (500) + shallower depth (6) = better bias-variance balance
 N_ESTIMATORS = 500
@@ -114,32 +114,33 @@ MAX_DEPTH    = 6
 RANDOM_STATE = 42
 TEST_SIZE    = 0.2   # NOTE: use walk-forward split in ml/return_predictor.py
 
-# FIX: expanded feature set — adds volume ratio, lag returns, and new Alpha features
-# FIX: Clean, deduplicated feature set (20 total features)
+# FIX: expanded feature set — adds MACD, volume ratio, lag returns
 PREDICTOR_FEATURES = [
-    # Original features
+    # Price & trend
     "daily_return",
     "ma7",
     "ma30",
     "ma_cross_signal",
+    "ma_spread",           # relative distance MA7 vs MA30
+    # Momentum & oscillators
     "rsi",
+    "rsi_binned",          # 0=oversold, 1=neutral, 2=overbought
     "bb_pct_b",
+    "momentum_14d",        # 14-day rate of change
+    # Risk & drawdown
     "volatility",
     "sharpe_ratio",
     "beta",
-    "bench_return",
-    # Volume & Lags
+    "drawdown_30d",        # distance from 30-day high
+    # Seasonality
+    "day_of_week",
+    # Volume
     "volume_ma20",
-    "volume_ratio",        
+    "volume_ratio",
+    # Lag returns
     "return_lag_1",
     "return_lag_5",
     "return_lag_10",
-    # Alpha & ETL Features
-    "momentum_14d",
-    "drawdown_30d",
-    "day_of_week",
-    "ma_spread",
-    "rsi_binned",
 ]
 
 # ─────────────────────────────────────────────
