@@ -277,7 +277,14 @@ def run_feature_engineering(spark: SparkSession, clean_sdf: DataFrame) -> DataFr
     log.info("  Forward return (ML target) ...")
     sdf = _add_forward_return(sdf)
 
+    # 1. Save the machine-readable Parquet file (for the ML pipeline)
     write_features_parquet(sdf)
+    
+    # 2. Save a human-readable CSV file (for you to inspect)
+    csv_path = os.path.join(cfg.PROCESSED_DIR, "features_preview.csv")
+    log.info(f"  Saving human-readable CSV preview → {csv_path}")
+    sdf.toPandas().to_csv(csv_path, index=False)
+
     log.info("Feature engineering complete.\n")
     return sdf
 
